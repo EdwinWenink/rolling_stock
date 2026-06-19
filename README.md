@@ -66,27 +66,30 @@ Train compositions are saved as JSON with the following structure:
 ```json
 [
   {
-    "train_number": "1234",
-    "timestamp": "2026-06-19T12:00:00",
-    "total_units": 2,
-    "total_coaches": 10,
+    "train_number": "32278",
+    "timestamp": "2022-07-16T19:50:56.392Z",
+    "total_units": 4,
+    "total_coaches": 14,
+    "total_length_cm": 9700,
     "composition_parts": [
       {
-        "type": "SLT",
-        "designation": "6",
-        "number": "2345",
-        "units": 1,
-        "coaches": 6
+        "type": "GTW-D-ARR",
+        "designation": "2/6",
+        "number": null,
+        "units": 2,
+        "coaches": 6,
+        "length_cm": 4100
       },
       {
-        "type": "SLT",
-        "designation": "4",
-        "number": "2346",
-        "units": 1,
-        "coaches": 4
+        "type": "GTW-D-ARR",
+        "designation": "2/8",
+        "number": null,
+        "units": 2,
+        "coaches": 8,
+        "length_cm": 5600
       }
     ],
-    "vehicle_types": ["SLT"]
+    "vehicle_types": ["GTW-D-ARR"]
   }
 ]
 ```
@@ -94,15 +97,17 @@ Train compositions are saved as JSON with the following structure:
 ## Data Fields
 
 - **train_number**: The train service number
-- **timestamp**: When the composition data was recorded
+- **timestamp**: Full ISO 8601 timestamp with milliseconds (e.g., "2022-07-16T19:50:56.392Z")
 - **total_units**: Total number of trainset units (treinstellen)
 - **total_coaches**: Total number of car bodies (wagenkasten)
+- **total_length_cm**: Total train length in centimeters (divide by 100 for meters)
 - **composition_parts**: Array of rolling stock units
   - **type**: Rolling stock type (e.g., "SLT", "ICM", "VIRM", "GTW-D-ARR")
   - **designation**: MaterieelAanduiding (e.g., "6", "2/6", "2/8")
   - **number**: Specific unit number (if available)
   - **units**: Number of trainset units in this part (treinstellen)
   - **coaches**: Number of car bodies in this part (wagenkasten)
+  - **length_cm**: Length of this part in centimeters (if available)
 - **vehicle_types**: Unique list of all vehicle types in the composition
 
 ### Understanding Units vs. Coaches

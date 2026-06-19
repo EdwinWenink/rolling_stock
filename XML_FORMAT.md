@@ -56,9 +56,11 @@ xmlns:ns2="urn:ndov:cdm:trein:reisinformatie:data:4"
 ```
 
 **Key Fields:**
+- `TimeStamp` (attribute) - Full ISO 8601 timestamp at product level (e.g., "2022-07-16T19:50:56.392Z")
 - `TreinNummer` - Train service number
 - `MaterieelSoort` - Rolling stock type (e.g., "GTW-D-ARR", "SLT", "VIRM")
 - `MaterieelAanduiding` - Coach count or designation (e.g., "6", "2/6", "4")
+- `MaterieelLengte` - Length in centimeters (e.g., 4100 = 41 meters)
 - `MaterieelNummer` - Specific unit number (optional)
 - `MaterieelDeelVolgordeVertrek` - Order in the train composition
 
@@ -103,9 +105,11 @@ xmlns:ns2="urn:ndov:cdm:trein:reisinformatie:data:4"
 ```
 
 **Key Fields:**
+- `TimeStamp` (attribute) - Full ISO 8601 timestamp at product level
 - `RitId` - Trip/service ID
 - `MaterieelDeelSoort` - Rolling stock type
 - `MaterieelDeelAanduiding` - Coach count or designation
+- `MaterieelDeelLengte` - Length in centimeters
 - `MaterieelNummer` - Specific unit number
 - `MaterieelDeelToegankelijk` - Accessibility (N/Y)
 - `AchterBlijvenMaterieelDeel` - Whether this unit stays behind (N/Y)
@@ -235,6 +239,24 @@ This represents:
 - 4 total GTW trainset units coupled together
 - 14 total car bodies providing passenger space
 - Two groups: a 2-unit/6-coach formation + a 2-unit/8-coach formation
+
+## Length Field
+
+Train part lengths are specified in **centimeters** (not millimeters or meters):
+
+**DVS messages:** `MaterieelLengte` (element)  
+**RIT messages:** `MaterieelDeelLengte` (element)
+
+**Examples:**
+- `4100` = 41 meters (GTW 2/6)
+- `5600` = 56 meters (GTW 2/8)
+- `10860` = 108.6 meters (VIRM 6)
+- `7240` = 72.4 meters (VIRM 4)
+
+The parser:
+- Stores individual part lengths as `length_cm` in each composition part
+- Sums them to calculate `total_length_cm` for the entire train
+- Displays length in meters in the string representation (dividing by 100)
 
 ## Compression
 

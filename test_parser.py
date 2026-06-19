@@ -13,11 +13,12 @@ def test_composition_class():
 
     comp = TrainComposition()
     comp.train_number = "1234"
-    comp.timestamp = "2026-06-19T12:00:00"
-    comp.add_part("SLT", "6", "2345", units=1, coaches=6)
-    comp.add_part("SLT", "4", "2346", units=1, coaches=4)
+    comp.timestamp = "2026-06-19T12:00:00.000Z"
+    comp.add_part("SLT", "6", "2345", units=1, coaches=6, length_cm=7500)
+    comp.add_part("SLT", "4", "2346", units=1, coaches=4, length_cm=5000)
     comp.total_units = 2
     comp.total_coaches = 10
+    comp.total_length_cm = 12500
 
     print(f"  {comp}")
     print(f"  Dict format: {comp.to_dict()}")
@@ -58,7 +59,7 @@ def test_xml_parsing():
     sample_xml = """<?xml version="1.0" encoding="UTF-8"?>
     <ns1:PutReisInformatieBoodschapIn xmlns:ns1="urn:ndov:cdm:trein:reisinformatie:messages:5"
         xmlns:ns2="urn:ndov:cdm:trein:reisinformatie:data:4">
-        <ns2:ReisInformatieProductDVS TimeStamp="2026-06-19T12:00:00">
+        <ns2:ReisInformatieProductDVS TimeStamp="2026-06-19T12:30:45.123Z">
             <ns2:DynamischeVertrekStaat>
                 <ns2:Trein>
                     <ns2:TreinNummer>1234</ns2:TreinNummer>
@@ -66,10 +67,12 @@ def test_xml_parsing():
                         <ns2:MaterieelDeelDVS>
                             <ns2:MaterieelSoort>SLT</ns2:MaterieelSoort>
                             <ns2:MaterieelAanduiding>6</ns2:MaterieelAanduiding>
+                            <ns2:MaterieelLengte>7500</ns2:MaterieelLengte>
                         </ns2:MaterieelDeelDVS>
                         <ns2:MaterieelDeelDVS>
                             <ns2:MaterieelSoort>SLT</ns2:MaterieelSoort>
                             <ns2:MaterieelAanduiding>4</ns2:MaterieelAanduiding>
+                            <ns2:MaterieelLengte>5000</ns2:MaterieelLengte>
                         </ns2:MaterieelDeelDVS>
                     </ns2:TreinVleugel>
                 </ns2:Trein>
@@ -83,6 +86,8 @@ def test_xml_parsing():
 
     if comp:
         print(f"  Parsed: {comp}")
+        print(f"  Timestamp: {comp.timestamp}")
+        print(f"  Total length: {comp.total_length_cm}cm ({comp.total_length_cm/100}m)")
         print("  ✓ DVS XML parsing works\n")
     else:
         print("  ✗ Failed to parse DVS sample XML\n")
@@ -95,7 +100,7 @@ def test_alternative_xml_format():
     sample_xml = """<?xml version="1.0" encoding="UTF-8"?>
     <ns1:PutReisInformatieBoodschapIn xmlns:ns1="urn:ndov:cdm:trein:reisinformatie:messages:5"
         xmlns:ns2="urn:ndov:cdm:trein:reisinformatie:data:4">
-        <ns2:ReisInformatieProductRitInfo TimeStamp="2026-06-19T13:00:00">
+        <ns2:ReisInformatieProductRitInfo TimeStamp="2026-06-19T13:15:22.456Z">
             <ns2:RitInfo>
                 <ns2:RitId>5678</ns2:RitId>
                 <ns2:LogischeRitDeel>
@@ -103,11 +108,13 @@ def test_alternative_xml_format():
                         <ns2:MaterieelDeel>
                             <ns2:MaterieelDeelSoort>VIRM</ns2:MaterieelDeelSoort>
                             <ns2:MaterieelDeelAanduiding>6</ns2:MaterieelDeelAanduiding>
+                            <ns2:MaterieelDeelLengte>10860</ns2:MaterieelDeelLengte>
                             <ns2:MaterieelNummer>000000-09547-0</ns2:MaterieelNummer>
                         </ns2:MaterieelDeel>
                         <ns2:MaterieelDeel>
                             <ns2:MaterieelDeelSoort>VIRM</ns2:MaterieelDeelSoort>
                             <ns2:MaterieelDeelAanduiding>4</ns2:MaterieelDeelAanduiding>
+                            <ns2:MaterieelDeelLengte>7240</ns2:MaterieelDeelLengte>
                             <ns2:MaterieelNummer>000000-09548-0</ns2:MaterieelNummer>
                         </ns2:MaterieelDeel>
                     </ns2:LogischeRitDeelStation>
@@ -122,6 +129,8 @@ def test_alternative_xml_format():
 
     if comp:
         print(f"  Parsed: {comp}")
+        print(f"  Timestamp: {comp.timestamp}")
+        print(f"  Total length: {comp.total_length_cm}cm ({comp.total_length_cm/100}m)")
         print("  ✓ RIT XML format works\n")
     else:
         print("  ✗ Failed to parse RIT XML format\n")
@@ -134,7 +143,7 @@ def test_gzip_decompression():
     sample_xml = """<?xml version="1.0" encoding="UTF-8"?>
     <ns1:PutReisInformatieBoodschapIn xmlns:ns1="urn:ndov:cdm:trein:reisinformatie:messages:5"
         xmlns:ns2="urn:ndov:cdm:trein:reisinformatie:data:4">
-        <ns2:ReisInformatieProductDVS TimeStamp="2026-06-19T14:00:00">
+        <ns2:ReisInformatieProductDVS TimeStamp="2026-06-19T14:45:33.789Z">
             <ns2:DynamischeVertrekStaat>
                 <ns2:Trein>
                     <ns2:TreinNummer>9999</ns2:TreinNummer>
@@ -142,10 +151,12 @@ def test_gzip_decompression():
                         <ns2:MaterieelDeelDVS>
                             <ns2:MaterieelSoort>ICM</ns2:MaterieelSoort>
                             <ns2:MaterieelAanduiding>3</ns2:MaterieelAanduiding>
+                            <ns2:MaterieelLengte>6800</ns2:MaterieelLengte>
                         </ns2:MaterieelDeelDVS>
                         <ns2:MaterieelDeelDVS>
                             <ns2:MaterieelSoort>ICM</ns2:MaterieelSoort>
                             <ns2:MaterieelAanduiding>4</ns2:MaterieelAanduiding>
+                            <ns2:MaterieelLengte>9100</ns2:MaterieelLengte>
                         </ns2:MaterieelDeelDVS>
                     </ns2:TreinVleugel>
                 </ns2:Trein>
@@ -165,6 +176,7 @@ def test_gzip_decompression():
 
     if comp:
         print(f"  Parsed from compressed: {comp}")
+        print(f"  Timestamp: {comp.timestamp}")
         print("  ✓ Gzip decompression works\n")
     else:
         print("  ✗ Failed to parse decompressed XML\n")

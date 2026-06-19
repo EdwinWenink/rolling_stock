@@ -36,10 +36,11 @@ class TrainComposition:
         self.composition_parts: List[Dict[str, str]] = []
         self.total_coaches: int = 0
         self.total_units: int = 0
+        self.total_length_cm: int = 0
         self.vehicle_types: List[str] = []
 
     def add_part(self, vehicle_type: str, designation: str, number: Optional[str] = None,
-                 units: int = 1, coaches: int = 0):
+                 units: int = 1, coaches: int = 0, length_cm: Optional[int] = None):
         """
         Add a rolling stock part to the composition
 
@@ -49,13 +50,15 @@ class TrainComposition:
             number: MaterieelNummer (optional unit number)
             units: Number of trainset units (treinstellen)
             coaches: Number of car bodies (wagenkasten)
+            length_cm: Length in centimeters (MaterieelLengte or MaterieelDeelLengte)
         """
         part = {
             'type': vehicle_type,
             'designation': designation,
             'number': number,
             'units': units,
-            'coaches': coaches
+            'coaches': coaches,
+            'length_cm': length_cm
         }
         self.composition_parts.append(part)
         self.vehicle_types.append(vehicle_type)
@@ -67,13 +70,15 @@ class TrainComposition:
             'timestamp': self.timestamp,
             'total_coaches': self.total_coaches,
             'total_units': self.total_units,
+            'total_length_cm': self.total_length_cm,
             'composition_parts': self.composition_parts,
             'vehicle_types': list(set(self.vehicle_types))
         }
 
     def __str__(self) -> str:
         parts_str = "; ".join([f"{p['type']} {p['designation']}" for p in self.composition_parts])
-        return f"Train {self.train_number}: {parts_str} ({self.total_units} units, {self.total_coaches} coaches)"
+        length_m = self.total_length_cm / 100 if self.total_length_cm > 0 else 0
+        return f"Train {self.train_number}: {parts_str} ({self.total_units} units, {self.total_coaches} coaches, {length_m:.1f}m)"
 
 
 def parse_materieel_aanduiding(aanduiding: str) -> tuple[int, int]:
@@ -164,10 +169,23 @@ class NDOVLoketParser:
             if train_number is not None and train_number.text:
                 composition.train_number = train_number.text
 
-            # Parse timestamp
-            timestamp = root.find('.//ns2:TimeStamp', ns) or root.find('.//ns2:RitDatum', ns)
-            if timestamp is not None and timestamp.text:
-                composition.timestamp = timestamp.text
+            # Parse timestamp - TimeStamp is at the product level (ReisInformatieProductDVS/@TimeStamp)
+            # First try the attribute on the product element
+            product_dvs = root.find('.//ns2:ReisInformatieProductDVS', ns)
+            product_rit = root.find('.//ns2:ReisInformatieProductRitInfo', ns)
+            product_das = root.find('.//ns2:ReisInformatieProductDAS', ns)
+
+            if product_dvs is not None and product_dvs.get('TimeStamp'):
+                composition.timestamp = product_dvs.get('TimeStamp')
+            elif product_rit is not None and product_rit.get('TimeStamp'):
+                composition.timestamp = product_rit.get('TimeStamp')
+            elif product_das is not None and product_das.get('TimeStamp'):
+                composition.timestamp = product_das.get('TimeStamp')
+            else:
+                # Fallback: try to find TimeStamp or RitDatum element
+                timestamp = root.find('.//ns2:TimeStamp', ns) or root.find('.//ns2:RitDatum', ns)
+                if timestamp is not None and timestamp.text:
+                    composition.timestamp = timestamp.text
 
             # Parse materieelsamenstelling from DVS messages (DynamischeVertrekStaat)
             # DVS: MaterieelDeelDVS with MaterieelSoort and MaterieelAanduiding
@@ -175,21 +193,33 @@ class NDOVLoketParser:
                 materieel_soort = materieel_deel.find('ns2:MaterieelSoort', ns)
                 materieel_aanduiding = materieel_deel.find('ns2:MaterieelAanduiding', ns)
                 materieel_nummer = materieel_deel.find('ns2:MaterieelNummer', ns)
+                materieel_lengte = materieel_deel.find('ns2:MaterieelLengte', ns)
 
                 if materieel_soort is not None and materieel_soort.text:
                     aanduiding_text = materieel_aanduiding.text if materieel_aanduiding is not None else ""
                     units, coaches = parse_materieel_aanduiding(aanduiding_text)
+
+                    # Parse length in centimeters
+                    length_cm = None
+                    if materieel_lengte is not None and materieel_lengte.text:
+                        try:
+                            length_cm = int(materieel_lengte.text)
+                        except ValueError:
+                            pass
 
                     composition.add_part(
                         vehicle_type=materieel_soort.text,
                         designation=aanduiding_text,
                         number=materieel_nummer.text if materieel_nummer is not None else None,
                         units=units,
-                        coaches=coaches
+                        coaches=coaches,
+                        length_cm=length_cm
                     )
 
                     composition.total_units += units
                     composition.total_coaches += coaches
+                    if length_cm:
+                        composition.total_length_cm += length_cm
 
             # Parse materieelsamenstelling from RIT messages (Service/RitInfo)
             # RIT: MaterieelDeel with MaterieelDeelSoort and MaterieelDeelAanduiding
@@ -197,21 +227,33 @@ class NDOVLoketParser:
                 materieel_soort = materieel_deel.find('ns2:MaterieelDeelSoort', ns)
                 materieel_aanduiding = materieel_deel.find('ns2:MaterieelDeelAanduiding', ns)
                 materieel_nummer = materieel_deel.find('ns2:MaterieelNummer', ns)
+                materieel_lengte = materieel_deel.find('ns2:MaterieelDeelLengte', ns)
 
                 if materieel_soort is not None and materieel_soort.text:
                     aanduiding_text = materieel_aanduiding.text if materieel_aanduiding is not None else ""
                     units, coaches = parse_materieel_aanduiding(aanduiding_text)
+
+                    # Parse length in centimeters
+                    length_cm = None
+                    if materieel_lengte is not None and materieel_lengte.text:
+                        try:
+                            length_cm = int(materieel_lengte.text)
+                        except ValueError:
+                            pass
 
                     composition.add_part(
                         vehicle_type=materieel_soort.text,
                         designation=aanduiding_text,
                         number=materieel_nummer.text if materieel_nummer is not None else None,
                         units=units,
-                        coaches=coaches
+                        coaches=coaches,
+                        length_cm=length_cm
                     )
 
                     composition.total_units += units
                     composition.total_coaches += coaches
+                    if length_cm:
+                        composition.total_length_cm += length_cm
 
             if composition.composition_parts:
                 return composition
