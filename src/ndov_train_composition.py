@@ -25,6 +25,8 @@ from datetime import datetime
 from typing import Dict, List, Optional
 import argparse
 import json
+import os
+from pathlib import Path
 
 
 class TrainComposition:
@@ -297,8 +299,9 @@ class NDOVLoketParser:
                     print(f"\n[{datetime.now()}] Message {count + 1} on: {envelope}")
 
                     if debug:
-                        # Save raw XML for debugging
-                        debug_file = f"debug_message_{count + 1}.xml"
+                        # Save raw XML for debugging to data directory
+                        os.makedirs('data', exist_ok=True)
+                        debug_file = f"data/debug_message_{count + 1}.xml"
                         with open(debug_file, 'w') as f:
                             f.write(xml_message)
                         print(f"  Saved to {debug_file}")
@@ -324,9 +327,13 @@ class NDOVLoketParser:
             print(f"Error receiving messages: {e}")
 
 
-def save_to_json(composition: TrainComposition, filename: str = "train_compositions.json"):
+def save_to_json(composition: TrainComposition, filename: str = "output/train_compositions.json"):
     """Save train composition to JSON file"""
     try:
+        # Ensure output directory exists
+        output_dir = Path(filename).parent
+        output_dir.mkdir(parents=True, exist_ok=True)
+
         try:
             with open(filename, 'r') as f:
                 data = json.load(f)
@@ -359,8 +366,8 @@ def main():
     )
     parser.add_argument(
         '--output',
-        default='train_compositions.json',
-        help='Output JSON file (default: train_compositions.json)'
+        default='output/train_compositions.json',
+        help='Output JSON file (default: output/train_compositions.json)'
     )
     parser.add_argument(
         '--topics',

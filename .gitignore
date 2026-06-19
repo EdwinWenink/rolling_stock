@@ -8,3 +8,19 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Output files
+output/
+*.json
+!pyproject.json
+
+# Debug files
+debug_message_*.xml
+
+# Data files
+data/*.xml
+data/*.json
+
+# Temporary files
+*.tmp
+*.log

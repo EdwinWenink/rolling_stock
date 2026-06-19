@@ -4,9 +4,36 @@ version = "0.1.0"
 description = "Parser for NDOVLoket train composition data (rolling stock information)"
 readme = "README.md"
 requires-python = ">=3.10"
+authors = [
+    { name = "Edwin Wenink", email = "edwinwenink@gmail.com" }
+]
+license = { text = "MIT" }
+keywords = ["ndovloket", "trains", "railway", "rolling-stock", "dutch-railways", "ns", "open-data"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
 dependencies = [
     "pyzmq>=25.0.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/EdwinWenink/materieelinfo"
+Documentation = "https://github.com/EdwinWenink/materieelinfo/tree/main/docs"
+Repository = "https://github.com/EdwinWenink/materieelinfo"
+Issues = "https://github.com/EdwinWenink/materieelinfo/issues"
+
 [tool.uv]
 package = false
+
+[dependency-groups]
+dev = [
+    "pytest",
+]

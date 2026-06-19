@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns1:PutReisInformatieBoodschapIn xmlns:ns1="urn:ndov:cdm:trein:reisinformatie:messages:5"
+    xmlns:ns2="urn:ndov:cdm:trein:reisinformatie:data:4">
+    <ns2:ReisInformatieProductDVS TimeStamp="2026-06-19T14:45:33.789Z">
+        <ns2:DynamischeVertrekStaat>
+            <ns2:RitId>32278</ns2:RitId>
+            <ns2:Trein>
+                <ns2:TreinNummer>32278</ns2:TreinNummer>
+                <ns2:TreinVleugel>
+                    <ns2:MaterieelDeelDVS>
+                        <ns2:MaterieelSoort>GTW-D-ARR</ns2:MaterieelSoort>
+                        <ns2:MaterieelAanduiding>2/6</ns2:MaterieelAanduiding>
+                        <ns2:MaterieelLengte>4100</ns2:MaterieelLengte>
+                    </ns2:MaterieelDeelDVS>
+                    <ns2:MaterieelDeelDVS>
+                        <ns2:MaterieelSoort>GTW-D-ARR</ns2:MaterieelSoort>
+                        <ns2:MaterieelAanduiding>2/8</ns2:MaterieelAanduiding>
+                        <ns2:MaterieelLengte>5600</ns2:MaterieelLengte>
+                    </ns2:MaterieelDeelDVS>
+                </ns2:TreinVleugel>
+            </ns2:Trein>
+        </ns2:DynamischeVertrekStaat>
+    </ns2:ReisInformatieProductDVS>
+</ns1:PutReisInformatieBoodschapIn>

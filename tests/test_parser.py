@@ -3,6 +3,12 @@
 Simple test to verify the parser works with sample XML data
 """
 
+import sys
+from pathlib import Path
+
+# Add src directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
+
 import gzip
 from ndov_train_composition import TrainComposition, NDOVLoketParser, parse_materieel_aanduiding
 

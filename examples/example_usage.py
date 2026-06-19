@@ -5,8 +5,15 @@ Example usage of the NDOVLoket Train Composition Parser
 This script demonstrates different ways to use the parser programmatically.
 """
 
+import sys
+from pathlib import Path
+
+# Add src directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
+
 from ndov_train_composition import NDOVLoketParser, TrainComposition
 import json
+import os
 
 
 def example_1_basic_usage():
@@ -73,7 +80,7 @@ def example_3_filter_by_coaches():
 
         print(f"\nFound {len(long_trains)} long trains")
 
-        with open('long_trains.json', 'w') as f:
+        with open('output/long_trains.json', 'w') as f:
             json.dump(long_trains, f, indent=2)
             print(f"Saved to long_trains.json")
 
@@ -126,7 +133,7 @@ def example_4_statistics():
         for coaches, count in sorted(stats['trains_by_coach_count'].items()):
             print(f"  {coaches} coaches: {count} trains")
 
-        with open('train_statistics.json', 'w') as f:
+        with open('output/train_statistics.json', 'w') as f:
             json.dump(stats, f, indent=2)
             print(f"\nStatistics saved to train_statistics.json")
 
@@ -157,7 +164,7 @@ def example_5_specific_train_type():
         print(f"\nFound {len(matching_trains)} trains with {target_type}")
 
         if matching_trains:
-            filename = f'{target_type.lower()}_trains.json'
+            filename = f'output/{target_type.lower()}_trains.json'
             with open(filename, 'w') as f:
                 json.dump(matching_trains, f, indent=2)
                 print(f"Saved to {filename}")

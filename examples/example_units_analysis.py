@@ -6,6 +6,12 @@ This example demonstrates how to work with the units (treinstellen) and
 coaches (wagenkasten) data extracted from NDOVLoket.
 """
 
+import sys
+from pathlib import Path
+
+# Add src directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
+
 from ndov_train_composition import NDOVLoketParser
 import json
 
@@ -105,7 +111,7 @@ def analyze_units_vs_coaches():
                 print()
 
             # Save detailed results
-            with open('units_analysis.json', 'w') as f:
+            with open('output/units_analysis.json', 'w') as f:
                 json.dump({
                     'statistics': stats,
                     'examples': {

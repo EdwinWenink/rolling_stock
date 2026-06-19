@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns1:PutReisInformatieBoodschapIn xmlns:ns1="urn:ndov:cdm:trein:reisinformatie:messages:5"
+    xmlns:ns2="urn:ndov:cdm:trein:reisinformatie:data:4">
+    <ns2:ReisInformatieProductRitInfo TimeStamp="2026-06-19T13:15:22.456Z">
+        <ns2:RitInfo>
+            <ns2:RitId>5678</ns2:RitId>
+            <ns2:LogischeRitDeel>
+                <ns2:LogischeRitDeelStation>
+                    <ns2:MaterieelDeel>
+                        <ns2:MaterieelDeelSoort>VIRM</ns2:MaterieelDeelSoort>
+                        <ns2:MaterieelDeelAanduiding>6</ns2:MaterieelDeelAanduiding>
+                        <ns2:MaterieelDeelLengte>10860</ns2:MaterieelDeelLengte>
+                        <ns2:MaterieelNummer>000000-09547-0</ns2:MaterieelNummer>
+                    </ns2:MaterieelDeel>
+                    <ns2:MaterieelDeel>
+                        <ns2:MaterieelDeelSoort>VIRM</ns2:MaterieelDeelSoort>
+                        <ns2:MaterieelDeelAanduiding>4</ns2:MaterieelDeelAanduiding>
+                        <ns2:MaterieelDeelLengte>7240</ns2:MaterieelDeelLengte>
+                        <ns2:MaterieelNummer>000000-09548-0</ns2:MaterieelNummer>
+                    </ns2:MaterieelDeel>
+                </ns2:LogischeRitDeelStation>
+            </ns2:LogischeRitDeel>
+        </ns2:RitInfo>
+    </ns2:ReisInformatieProductRitInfo>
+</ns1:PutReisInformatieBoodschapIn>
