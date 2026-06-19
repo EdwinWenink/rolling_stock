@@ -1,0 +1,12 @@
+[project]
+name = "materieelinfo"
+version = "0.1.0"
+description = "Parser for NDOVLoket train composition data (rolling stock information)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pyzmq>=25.0.0",
+]
+
+[tool.uv]
+package = false
